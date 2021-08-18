@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nfc_tool/model/form.dart';
+import 'package:nfc_tool/ui/write_symptoms_page.dart';
 import 'package:nfc_tool/util/validator.dart';
 import 'package:nfc_tool/widgets/custom_textfield.dart';
 import 'package:nfc_tool/widgets/secondary_button.dart';
@@ -10,11 +12,18 @@ class WriteDetailsPage extends StatefulWidget with Validator {
   _WriteDetailsPageState createState() => _WriteDetailsPageState();
 }
 
-void onNextButtonPressed(GlobalKey<FormState> key) {
-  if (key.currentState!.validate()) {
-    print('success');
-  }
-  print('error');
+void onNextButtonPressed(
+    GlobalKey<FormState> key, BuildContext context, Details details) {
+  // if (key.currentState!.validate()) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => WriteSymptomsPage(
+          details: details,
+        ),
+      ),
+    );
+  // }
+  // print('error');
 }
 
 class _WriteDetailsPageState extends State<WriteDetailsPage> {
@@ -70,7 +79,18 @@ class _WriteDetailsPageState extends State<WriteDetailsPage> {
             ),
             SecondaryButton(
               text: 'Next',
-              onPressed: () => onNextButtonPressed(_formKey),
+              onPressed: () => onNextButtonPressed(
+                _formKey,
+                context,
+                Details(
+                  fullname: _fullnameController.text,
+                  college: _collegeController.text,
+                  cys: _cysController.text,
+                  address: _addressController.text,
+                  mobile: _mobileController.text,
+                  email: _emailController.text,
+                ),
+              ),
             ),
           ],
         ),

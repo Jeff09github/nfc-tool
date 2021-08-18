@@ -10,7 +10,7 @@ class Validator {
     if (mobile == null || mobile.isEmpty) {
       return 'please enter your mobile number';
     }
-    return RegExp(r"^(?:[+0]9)?[0-9]{10}$").hasMatch(mobile)
+    return RegExp(r"^(?:[+0]9)?[0-9]{9}$").hasMatch(mobile)
         ? null
         : 'please enter a valid number';
   }

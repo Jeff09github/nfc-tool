@@ -18,7 +18,6 @@ class Details {
 
 class Symptom {
   final String kind;
-  final bool experiece;
-
+  bool experiece;
   Symptom({required this.kind, this.experiece = false});
 }

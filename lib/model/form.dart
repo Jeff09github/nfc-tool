@@ -1,3 +1,5 @@
+import 'package:nfc_tool/util/enum.dart';
+
 class Details {
   final String fullname;
   final String college;
@@ -20,4 +22,14 @@ class Symptom {
   final String kind;
   bool experiece;
   Symptom({required this.kind, this.experiece = false});
+}
+
+class Question {
+  final String question;
+  String? specify;
+  YesOrNo? yesOrNo;
+
+  Question({required this.question, this.yesOrNo});
+  Question.withSpecify({required this.question, this.yesOrNo, this.specify});
+
 }

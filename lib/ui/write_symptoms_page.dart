@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nfc_tool/model/form.dart';
+import 'package:nfc_tool/ui/wriite_questions_page.dart';
 import 'package:nfc_tool/widgets/secondary_button.dart';
 
 class WriteSymptomsPage extends StatefulWidget {
@@ -12,8 +13,8 @@ class WriteSymptomsPage extends StatefulWidget {
 }
 
 class _WriteSymptomsPageState extends State<WriteSymptomsPage> {
-  List<String> data = [];
-  List<Symptom> symptoms = [];
+  late List<String> data;
+  late List<Symptom> symptoms;
 
   @override
   void initState() {
@@ -44,9 +45,16 @@ class _WriteSymptomsPageState extends State<WriteSymptomsPage> {
     return checking;
   }
 
+  void onNextButtonPressed(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => WriteQuestionsPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -55,8 +63,9 @@ class _WriteSymptomsPageState extends State<WriteSymptomsPage> {
       body: ListView.builder(
         itemCount: symptoms.length + 1,
         itemBuilder: (context, index) {
-          if (index == symptoms.length  ) {
-            return SecondaryButton(text: 'Next', onPressed: () => {});
+          if (index == symptoms.length) {
+            return SecondaryButton(
+                text: 'Next', onPressed: () => onNextButtonPressed(context));
           }
           return Row(
             children: [

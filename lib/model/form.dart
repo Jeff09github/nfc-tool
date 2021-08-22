@@ -16,12 +16,32 @@ class Details {
     required this.mobile,
     required this.email,
   });
+
+  toMap() => {
+        'fullName': fullname,
+        'college': college,
+        'cys': cys,
+        'address': address,
+        'mobile': mobile,
+        'email': email,
+      };
 }
 
 class Symptom {
   final String kind;
+  String? image;
   bool experiece;
-  Symptom({required this.kind, this.experiece = false});
+
+  Symptom({
+    required this.kind,
+    this.image,
+    this.experiece = false,
+  });
+
+  toMap() => {
+        'kind': this.kind,
+        'experience': this.experiece,
+      };
 }
 
 class Question {
@@ -31,5 +51,4 @@ class Question {
 
   Question({required this.question, this.yesOrNo});
   Question.withSpecify({required this.question, this.yesOrNo, this.specify});
-
 }

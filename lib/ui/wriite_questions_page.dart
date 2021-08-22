@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:nfc_tool/model/form.dart';
+import 'package:nfc_tool/ui/agreement_page.dart';
 import 'package:nfc_tool/util/enum.dart';
 import 'package:nfc_tool/util/validator.dart';
+import 'package:nfc_tool/widgets/custom_radiolisttile.dart';
 import 'package:nfc_tool/widgets/custom_textfield.dart';
 import 'package:nfc_tool/widgets/secondary_button.dart';
 
 class WriteQuestionsPage extends StatefulWidget {
-  const WriteQuestionsPage({Key? key}) : super(key: key);
+  const WriteQuestionsPage({required details, required symptoms})
+      : _details = details,
+        _symptoms = symptoms;
+
+  final Details _details;
+  final List<Symptom> _symptoms;
 
   @override
   _WriteQuestionsPageState createState() => _WriteQuestionsPageState();
@@ -16,6 +23,8 @@ class _WriteQuestionsPageState extends State<WriteQuestionsPage>
     with Validator {
   late List<Map<String, dynamic>> data;
   late List<Question> questions;
+
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   late TextEditingController specifyController;
 
@@ -56,21 +65,51 @@ class _WriteQuestionsPageState extends State<WriteQuestionsPage>
   }
 
   void onNextButtonPressed(BuildContext context) {
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (context) => WriteQuestionsPage(),
-    //   ),
-    // );
+    bool validate = true;
+    questions.forEach((element) {
+      if (element.yesOrNo == null) {
+        validate = false;
+      }
+    });
+    if (validate) {
+      if (_formKey.currentState!.validate()) {
+        print('next');
+        questions.forEach((Question element) {
+          if (element.specify != null) {
+            if (specifyController.text == '') {
+              element.specify = '';
+            }
+          }
+        });
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => AgreementPage(
+              details: widget._details,
+              symptoms: widget._symptoms,
+              questions: questions,
+            ),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('you need to answer all questions'),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF2F2F2),
       appBar: AppBar(
         centerTitle: true,
         title: Text('Write'),
       ),
       body: ListView.builder(
+        padding: EdgeInsets.all(16.0),
         itemCount: questions.length + 1,
         itemBuilder: (context, index) {
           if (index == questions.length) {
@@ -79,33 +118,64 @@ class _WriteQuestionsPageState extends State<WriteQuestionsPage>
           }
           return Column(
             children: [
-              Text(questions[index].question),
-              RadioListTile<YesOrNo>(
-                title: const Text('Yes'),
+              Text(
+                questions[index].question,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6!
+                    .copyWith(fontSize: 12.0),
+              ),
+              SizedBox(
+                height: 8.0,
+              ),
+              CustomRadioListTile(
+                title: 'Yes',
                 value: YesOrNo.yes,
                 groupValue: questions[index].yesOrNo,
-                onChanged: (YesOrNo? value) {
+                onChanged: (value) {
                   setState(() {
-                    questions[index].yesOrNo = value!;
+                    questions[index].yesOrNo = value;
                   });
                 },
               ),
               questions[index].specify != null
-                  ? CustomTextfield(
-                      text: '',
-                      controller: specifyController,
-                      validator: textValidation,
+                  ? Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CustomTextfield(
+                          enabled: questions[index].yesOrNo == YesOrNo.yes
+                              ? true
+                              : false,
+                          text: '',
+                          controller: specifyController,
+                          onChanged: (value) {
+                            print(value);
+                            questions[index].specify = value;
+                          },
+                          validator: (value) {
+                            return textFieldSpecifyValidation(
+                                yesOrNo: questions[index].yesOrNo, text: value);
+                          },
+                        ),
+                      ),
                     )
-                  : SizedBox(),
-              RadioListTile<YesOrNo>(
-                title: const Text('No'),
+                  : SizedBox(
+                      height: 8.0,
+                    ),
+              CustomRadioListTile(
+                title: 'No',
                 value: YesOrNo.no,
                 groupValue: questions[index].yesOrNo,
-                onChanged: (YesOrNo? value) {
+                onChanged: (value) {
                   setState(() {
-                    questions[index].yesOrNo = value; 
+                    specifyController.text = '';
+                    questions[index].yesOrNo = value;
                   });
                 },
+              ),
+              SizedBox(
+                height: 16.0,
               ),
             ],
           );

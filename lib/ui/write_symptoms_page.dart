@@ -13,24 +13,55 @@ class WriteSymptomsPage extends StatefulWidget {
 }
 
 class _WriteSymptomsPageState extends State<WriteSymptomsPage> {
-  late List<String> data;
+  late List<Map<String, dynamic>> data;
   late List<Symptom> symptoms;
 
   @override
   void initState() {
     data = [
-      'Feve',
-      'Dry Cough',
-      'Fatigue',
-      'Aces and Pains',
-      'Runny Nose',
-      'Sore Throat',
-      'Shortness of Breath',
-      'Diarrhea',
-      'Headache',
-      'None of the above',
+      {
+        'symptom': 'Fever',
+        'icon': 'assets/images/1Fever.png',
+      },
+      {
+        'symptom': 'Dry Cough',
+        'icon': 'assets/images/2Cough.png',
+      },
+      {
+        'symptom': 'Fatigue',
+        'icon': 'assets/images/3Fatigue.png',
+      },
+      {
+        'symptom': 'Aces and Pains',
+        'icon': 'assets/images/4AchesAndPains.png',
+      },
+      {
+        'symptom': 'Runny Nose',
+        'icon': 'assets/images/5RunnyNose.png',
+      },
+      {
+        'symptom': 'Sore Throat',
+        'icon': 'assets/images/6SoreThroat.png',
+      },
+      {
+        'symptom': 'Shortness of Breath',
+        'icon': 'assets/images/7DifficultyBreathing.png',
+      },
+      {
+        'symptom': 'Diarrhea',
+        'icon': 'assets/images/8Diarrhea.png',
+      },
+      {
+        'symptom': 'Headache',
+        'icon': 'assets/images/9Headache.png',
+      },
+      {
+        'symptom': 'None of the above',
+        'icon': null,
+      },
     ];
-    symptoms = data.map((e) => Symptom(kind: e, experiece: false)).toList();
+    symptoms =
+        data.map((e) => Symptom(kind: e['symptom'], image: e['icon'])).toList();
 
     super.initState();
   }
@@ -46,56 +77,132 @@ class _WriteSymptomsPageState extends State<WriteSymptomsPage> {
   }
 
   void onNextButtonPressed(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => WriteQuestionsPage(),
-      ),
-    );
+    // bool validate = false;
+    // symptoms.forEach((element) {
+    //   if (element.experiece) {
+    //     validate = true;
+    //     return;
+    //   }
+    // });
+
+    // if (validate) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => WriteQuestionsPage(
+            details: widget._details,
+            symptoms: symptoms,
+          ),
+        ),
+      );
+    // } else {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //       content: Text(
+    //           'Choose \'None of the above\' if you don\'t experience any on the list'),
+    //     ),
+    //   );
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF2F2F2),
       appBar: AppBar(
         centerTitle: true,
         title: Text(widget._details.fullname),
       ),
       body: ListView.builder(
-        itemCount: symptoms.length + 1,
+        padding: EdgeInsets.all(16.0),
+        itemCount: symptoms.length + 2,
         itemBuilder: (context, index) {
-          if (index == symptoms.length) {
-            return SecondaryButton(
-                text: 'Next', onPressed: () => onNextButtonPressed(context));
+          if (index == 0) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Do you experience the following?',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6!
+                      .copyWith(fontSize: 12.0),
+                ),
+                SizedBox(
+                  height: 8.0,
+                ),
+              ],
+            );
           }
-          return Row(
-            children: [
-              Checkbox(
-                checkColor: Colors.black,
-                shape: CircleBorder(),
-                fillColor: MaterialStateProperty.all(Colors.black),
-                value: symptoms[index].experiece,
-                onChanged: (bool? value) {
-                  if (symptoms[index].kind == 'None of the above') {
-                    if (!symptoms[index].experiece) {
-                      for (int x = 0; x < symptoms.length - 1; x++) {
-                        symptoms[x].experiece = false;
+          if (index == symptoms.length + 1) {
+            bool _enabled = false;
+            symptoms.forEach((element) {
+              if (element.experiece == true) {
+                _enabled = true;
+                return;
+              }
+            });
+            return SecondaryButton(
+                text: 'Next',
+                onPressed:
+                    _enabled ? () => onNextButtonPressed(context) : null);
+          }
+          return Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(12.0))),
+            margin: EdgeInsets.symmetric(
+              vertical: 2.0,
+            ),
+            // padding: EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Checkbox(
+                  checkColor: Colors.black,
+                  shape: CircleBorder(),
+                  fillColor: MaterialStateProperty.all(Colors.black),
+                  value: symptoms[index - 1].experiece,
+                  onChanged: (bool? value) {
+                    if (symptoms[index - 1].kind == 'None of the above') {
+                      if (!symptoms[index - 1].experiece) {
+                        for (int x = 0; x < symptoms.length; x++) {
+                          symptoms[x].experiece = false;
+                        }
+                      }
+
+                      symptoms[index - 1].experiece = value!;
+                    } else {
+                      if (symptoms[symptoms.length - 1].experiece) {
+                        symptoms[symptoms.length - 1].experiece = false;
+                        symptoms[index - 1].experiece = value!;
+                      } else {
+                        symptoms[index - 1].experiece = value!;
                       }
                     }
-
-                    symptoms[index].experiece = value!;
-                  } else {
-                    if (symptoms[symptoms.length - 1].experiece) {
-                      symptoms[symptoms.length - 1].experiece = false;
-                      symptoms[index].experiece = value!;
-                    } else {
-                      symptoms[index].experiece = value!;
-                    }
-                  }
-                  setState(() {});
-                },
-              ),
-              Text(symptoms[index].kind),
-            ],
+                    setState(() {});
+                  },
+                ),
+                if (symptoms[index - 1].image == null) ...[
+                  SizedBox(),
+                ] else ...[
+                  Image.asset(
+                    symptoms[index - 1].image!,
+                    filterQuality: FilterQuality.none,
+                    height: 50.0,
+                    width: 50.0,
+                  ),
+                ],
+                SizedBox(
+                  width: 8.0,
+                ),
+                Text(
+                  symptoms[index - 1].kind,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6!
+                      .copyWith(fontSize: 11.0, fontFamily: 'Arial'),
+                ),
+              ],
+            ),
           );
         },
       ),

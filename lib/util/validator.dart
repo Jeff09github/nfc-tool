@@ -1,3 +1,5 @@
+import 'package:nfc_tool/util/enum.dart';
+
 class Validator {
   String? textValidation(String? text) {
     if (text == null || text.isEmpty) {
@@ -24,5 +26,19 @@ class Validator {
             .hasMatch(email)
         ? null
         : 'please enter a valid email address';
+  }
+
+  String? textFieldSpecifyValidation(
+      {required YesOrNo? yesOrNo, String? text}) {
+    if (yesOrNo != null) {
+      if (yesOrNo == YesOrNo.yes) {
+        if (text == null || text.trim() == '' || text.isEmpty) {
+          return 'you need to enter where you went';
+        } else {
+          return null;
+        }
+      }
+    }
+    return null;
   }
 }

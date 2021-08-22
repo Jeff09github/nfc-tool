@@ -14,16 +14,16 @@ class WriteDetailsPage extends StatefulWidget with Validator {
 
 void onNextButtonPressed(
     GlobalKey<FormState> key, BuildContext context, Details details) {
-  // if (key.currentState!.validate()) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => WriteSymptomsPage(
-          details: details,
-        ),
+  if (key.currentState!.validate()) {
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) => WriteSymptomsPage(
+        details: details,
       ),
-    );
-  // }
-  // print('error');
+    ),
+  );
+  }
+  print('validation error');
 }
 
 class _WriteDetailsPageState extends State<WriteDetailsPage> {
@@ -39,6 +39,7 @@ class _WriteDetailsPageState extends State<WriteDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF2F2F2),
       appBar: AppBar(
         centerTitle: true,
         title: Text('Write'),
@@ -46,49 +47,62 @@ class _WriteDetailsPageState extends State<WriteDetailsPage> {
       body: Form(
         key: _formKey,
         child: ListView(
+          padding: EdgeInsets.all(16.0),
           children: [
             CustomTextfield(
               validator: widget.textValidation,
               controller: _fullnameController,
               text: 'Full Name',
             ),
+            SizedBox(height: 8.0,),
             CustomTextfield(
               validator: widget.textValidation,
               controller: _collegeController,
               text: 'College',
             ),
+            SizedBox(height: 8.0,),
             CustomTextfield(
               validator: widget.textValidation,
               controller: _cysController,
               text: 'CYS',
             ),
+            SizedBox(height: 8.0,),
             CustomTextfield(
               validator: widget.textValidation,
               controller: _addressController,
               text: 'Address',
             ),
+            SizedBox(height: 8.0,),
             CustomTextfield(
               validator: widget.mobileValidation,
               controller: _mobileController,
               text: 'Mobile Phone Number',
             ),
+            SizedBox(height: 8.0,),
             CustomTextfield(
               validator: widget.emailValidation,
               controller: _emailController,
               text: 'E-mail Address',
             ),
-            SecondaryButton(
-              text: 'Next',
-              onPressed: () => onNextButtonPressed(
-                _formKey,
-                context,
-                Details(
-                  fullname: _fullnameController.text,
-                  college: _collegeController.text,
-                  cys: _cysController.text,
-                  address: _addressController.text,
-                  mobile: _mobileController.text,
-                  email: _emailController.text,
+            SizedBox(
+              height: 8.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SecondaryButton(
+                backroudColor: Theme.of(context).primaryColor,
+                text: 'Next',
+                onPressed: () => onNextButtonPressed(
+                  _formKey,
+                  context,
+                  Details(
+                    fullname: _fullnameController.text,
+                    college: _collegeController.text,
+                    cys: _cysController.text,
+                    address: _addressController.text,
+                    mobile: _mobileController.text,
+                    email: _emailController.text,
+                  ),
                 ),
               ),
             ),
